@@ -42,22 +42,23 @@
             width: 100%;
         }
 
-        /* SVG Icon alignment helper */
+        /* Fully Responsive Icon Helper */
         .icon {
             display: inline-flex;
             align-items: center;
             justify-content: center;
             vertical-align: middle;
-            margin-right: 6px;
+            margin-right: 0.4em;
+            flex-shrink: 0;
         }
 
         .icon svg {
-            width: 18px;
-            height: 18px;
+            width: clamp(14px, 1.2em, 22px);
+            height: clamp(14px, 1.2em, 22px);
             fill: currentColor;
         }
 
-        /* Responsive Header */
+        /* Header */
         header {
             margin-bottom: 24px;
             border-bottom: 1px solid var(--border-color);
@@ -97,7 +98,6 @@
             align-items: center;
         }
 
-        /* Live Pulse Dot */
         .pulse-dot {
             width: 8px;
             height: 8px;
@@ -114,7 +114,7 @@
             100% { transform: scale(0.95); opacity: 0.8; }
         }
 
-        /* Notification Alert */
+        /* Alert Notification Box */
         .alert-box {
             display: none;
             background: rgba(74, 222, 128, 0.15);
@@ -132,7 +132,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Metrics Grid */
+        /* Responsive Metrics Grid */
         .metrics-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -166,11 +166,6 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-        }
-
-        .metric-icon svg {
-            width: 20px;
-            height: 20px;
         }
 
         .metric-value {
@@ -262,9 +257,7 @@
             transition: background 0.2s, transform 0.1s;
         }
 
-        .btn-action:hover {
-            background: #7dd3fc;
-        }
+        .btn-action:hover { background: #7dd3fc; }
 
         .btn-small {
             padding: 6px 12px;
@@ -314,9 +307,7 @@
             color: var(--text-primary);
         }
 
-        tr:hover {
-            background: rgba(255, 255, 255, 0.02);
-        }
+        tr:hover { background: rgba(255, 255, 255, 0.02); }
 
         .status-badge {
             padding: 4px 10px;
@@ -328,22 +319,11 @@
             gap: 4px;
         }
 
-        .status-badge.churned {
-            background: rgba(248, 113, 113, 0.2);
-            color: var(--accent-red);
-        }
+        .status-badge.churned { background: rgba(248, 113, 113, 0.2); color: var(--accent-red); }
+        .status-badge.sent { background: rgba(251, 191, 36, 0.2); color: var(--accent-yellow); }
+        .status-badge.replied { background: rgba(74, 222, 128, 0.2); color: var(--accent-green); }
 
-        .status-badge.sent {
-            background: rgba(251, 191, 36, 0.2);
-            color: var(--accent-yellow);
-        }
-
-        .status-badge.replied {
-            background: rgba(74, 222, 128, 0.2);
-            color: var(--accent-green);
-        }
-
-        /* Outbox Log Cards */
+        /* Outbox Interactive Log Items */
         .outbox-container {
             display: flex;
             flex-direction: column;
@@ -356,11 +336,14 @@
             border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 14px;
-            transition: border-color 0.2s;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
         .email-log-item:hover {
             border-color: var(--accent-blue);
+            background: rgba(30, 41, 59, 0.8);
+            transform: translateX(4px);
         }
 
         .email-header {
@@ -376,6 +359,8 @@
             font-weight: 600;
             color: var(--accent-blue);
             font-size: 14px;
+            display: flex;
+            align-items: center;
         }
 
         .email-time {
@@ -398,6 +383,101 @@
             border-radius: 6px;
             font-family: monospace;
             white-space: pre-wrap;
+        }
+
+        .click-hint {
+            font-size: 11px;
+            color: var(--accent-yellow);
+            margin-top: 6px;
+            display: inline-block;
+            font-weight: 600;
+        }
+
+        /* MODAL POPUP FOR INSPECTING SENT EMAIL UPDATES */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(6px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            max-width: 650px;
+            width: 100%;
+            padding: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 14px;
+            margin-bottom: 16px;
+        }
+
+        .modal-header h3 {
+            font-size: 18px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close-btn:hover { color: var(--accent-red); }
+
+        .modal-detail-row {
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .modal-detail-row strong {
+            color: var(--accent-blue);
+            display: inline-block;
+            width: 110px;
+        }
+
+        .modal-body-box {
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px;
+            margin-top: 14px;
+            font-size: 13px;
+            color: #cbd5e1;
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+
+        .feedback-tag {
+            background: rgba(74, 222, 128, 0.15);
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-top: 12px;
+            font-size: 13px;
         }
 
         /* Insights Grid */
@@ -429,11 +509,8 @@
             font-size: 13px;
         }
 
-        .insight-box li {
-            margin-bottom: 8px;
-        }
+        .insight-box li { margin-bottom: 8px; }
 
-        /* Breakpoints */
         @media (max-width: 992px) {
             .charts-grid, .insights-grid { grid-template-columns: 1fr; }
         }
@@ -448,33 +525,33 @@
 <body>
 
     <div class="dashboard-container">
-        <!-- Dashboard Header with Live Pulse Dot & SVG Icons -->
+        <!-- Dashboard Header with Live Pulse Dot & Responsive Icons -->
         <header>
             <div class="header-title">
                 <h1>
-                    <span class="icon">
+                    <span class="icon" style="color: var(--accent-blue);">
                         <svg viewBox="0 0 24 24"><path d="M3 13h2v-2H3v2zm0 4h2v-2H3v2zm0-8h2V7H3v2zm4 4h14v-2H7v2zm0 4h14v-2H7v2zM7 7v2h14V7H7z"/></svg>
                     </span>
                     Churn Analysis & Customer Intelligence Hub
                 </h1>
-                <p>OTT Platform • SQL Analytics, Churn Prediction & Direct Email Outreach System</p>
+                <p>OTT Platform • SQL Analytics, Churn Prediction & Interactive Email Service</p>
             </div>
             <div class="badge">
-                <div class="pulse-dot"></div> Live Dashboard & Retention Hub
+                <div class="pulse-dot"></div> Live Interactive Dashboard
             </div>
         </header>
 
         <div id="alertBox" class="alert-box">
-            ✅ Success! Retention survey email successfully sent to customer and feedback reason logged into database.
+            ✅ Success! Retention survey email successfully sent to customer and feedback logged into database.
         </div>
 
-        <!-- Metrics Cards with Icons -->
+        <!-- Metrics Cards with Responsive Icons -->
         <div class="metrics-grid">
             <div class="metric-card">
                 <div class="metric-header">
                     <span class="metric-title">Overall Churn Rate</span>
                     <span class="metric-icon" style="color: var(--accent-red);">
-                        <svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+                        <span class="icon"><svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg></span>
                     </span>
                 </div>
                 <div class="metric-value red">28.6%</div>
@@ -485,7 +562,7 @@
                 <div class="metric-header">
                     <span class="metric-title">Retention Rate</span>
                     <span class="metric-icon" style="color: var(--accent-green);">
-                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        <span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></span>
                     </span>
                 </div>
                 <div class="metric-value green">71.4%</div>
@@ -496,7 +573,7 @@
                 <div class="metric-header">
                     <span class="metric-title">Monthly Churn</span>
                     <span class="metric-icon" style="color: var(--accent-red);">
-                        <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+                        <span class="icon"><svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg></span>
                     </span>
                 </div>
                 <div class="metric-value red">55.6%</div>
@@ -507,7 +584,7 @@
                 <div class="metric-header">
                     <span class="metric-title">Average ARPU</span>
                     <span class="metric-icon" style="color: var(--accent-blue);">
-                        <svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+                        <span class="icon"><svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg></span>
                     </span>
                 </div>
                 <div class="metric-value blue">$19.27</div>
@@ -518,7 +595,7 @@
                 <div class="metric-header">
                     <span class="metric-title">Monthly Revenue Loss</span>
                     <span class="metric-icon" style="color: var(--accent-red);">
-                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+                        <span class="icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg></span>
                     </span>
                 </div>
                 <div class="metric-value red">$73.94</div>
@@ -529,7 +606,7 @@
                 <div class="metric-header">
                     <span class="metric-title">Email Feedback Rate</span>
                     <span class="metric-icon" style="color: var(--accent-yellow);">
-                        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                        <span class="icon"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></span>
                     </span>
                 </div>
                 <div class="metric-value yellow">50.0%</div>
@@ -541,9 +618,7 @@
         <div class="charts-grid">
             <div class="chart-card">
                 <h3>
-                    <span class="icon" style="color: var(--accent-green);">
-                        <svg viewBox="0 0 24 24"><path d="M11 2v20c-5.07-.5-9-4.79-9-10s3.93-9.5 9-10zm2 0v8.99h9c-.47-4.74-4.26-8.52-9-8.99zm0 11.01V22c4.74-.47 8.53-4.25 9-8.99h-9z"/></svg>
-                    </span>
+                    <span class="icon" style="color: var(--accent-green);"><svg viewBox="0 0 24 24"><path d="M11 2v20c-5.07-.5-9-4.79-9-10s3.93-9.5 9-10zm2 0v8.99h9c-.47-4.74-4.26-8.52-9-8.99zm0 11.01V22c4.74-.47 8.53-4.25 9-8.99h-9z"/></svg></span>
                     Retention vs Churn Distribution
                 </h3>
                 <div class="chart-container">
@@ -553,9 +628,7 @@
 
             <div class="chart-card">
                 <h3>
-                    <span class="icon" style="color: var(--accent-blue);">
-                        <svg viewBox="0 0 24 24"><path d="M5 92h3v14H5zm5-6h3v20h-3zm5-8h3v28h-3zm5-6h3v34h-3z"/></svg>
-                    </span>
+                    <span class="icon" style="color: var(--accent-blue);"><svg viewBox="0 0 24 24"><path d="M5 92h3v14H5zm5-6h3v20h-3zm5-8h3v28h-3zm5-6h3v34h-3z"/></svg></span>
                     Churn Rate by Contract Type (%)
                 </h3>
                 <div class="chart-container">
@@ -565,9 +638,7 @@
 
             <div class="chart-card">
                 <h3>
-                    <span class="icon" style="color: var(--accent-purple);">
-                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
-                    </span>
+                    <span class="icon" style="color: var(--accent-purple);"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg></span>
                     Churn Rate by Subscription Plan Tier
                 </h3>
                 <div class="chart-container">
@@ -577,9 +648,7 @@
 
             <div class="chart-card">
                 <h3>
-                    <span class="icon" style="color: var(--accent-red);">
-                        <svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
-                    </span>
+                    <span class="icon" style="color: var(--accent-red);"><svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg></span>
                     Support Escalation Impact on Churn
                 </h3>
                 <div class="chart-container">
@@ -592,9 +661,7 @@
         <div class="table-section">
             <div class="section-header">
                 <h3>
-                    <span class="icon" style="color: var(--accent-blue);">
-                        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-                    </span>
+                    <span class="icon" style="color: var(--accent-blue);"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></span>
                     Direct Customer Contact & Retention Hub
                 </h3>
                 <button class="btn-action" onclick="sendBatchEmails()">
@@ -625,7 +692,7 @@
                             <td>Basic (Monthly)</td>
                             <td><span class="status-badge replied">Replied</span></td>
                             <td>Price Hike in Sep ("Subscription too expensive")</td>
-                            <td><button class="btn-small" onclick="sendDirectEmail('Aarav Sharma', 'aarav.sharma@example.com', 'Price Hike Offer')">📧 Re-email Offer</button></td>
+                            <td><button class="btn-small" onclick="sendDirectEmail('Aarav Sharma', 'aarav.sharma@example.com', 'Price Hike Offer', 'Price Sensitivity: Subscription too expensive after price revision in Karnataka.')">📧 Re-email Offer</button></td>
                         </tr>
                         <tr>
                             <td><strong>Priya Patel</strong></td>
@@ -635,7 +702,7 @@
                             <td>Basic (Monthly)</td>
                             <td><span class="status-badge replied">Replied</span></td>
                             <td>Competitor Switch ("Switched to competitor")</td>
-                            <td><button class="btn-small" onclick="sendDirectEmail('Priya Patel', 'priya.patel@example.com', 'Annual Discount Offer')">📧 Re-email Offer</button></td>
+                            <td><button class="btn-small" onclick="sendDirectEmail('Priya Patel', 'priya.patel@example.com', 'Annual Discount Offer', 'Competitor Switch: Moved to rival app for annual bundle deal.')">📧 Re-email Offer</button></td>
                         </tr>
                         <tr>
                             <td><strong>Rahul Verma</strong></td>
@@ -645,7 +712,7 @@
                             <td>Basic (Monthly)</td>
                             <td><span class="status-badge replied">Replied</span></td>
                             <td>Technical Glitch ("Buffering during live streaming")</td>
-                            <td><button class="btn-small" onclick="sendDirectEmail('Rahul Verma', 'rahul.verma@example.com', 'Tech Support Trial')">📧 Re-email Offer</button></td>
+                            <td><button class="btn-small" onclick="sendDirectEmail('Rahul Verma', 'rahul.verma@example.com', 'Tech Support Trial', 'Technical Glitch: Video buffering and latency on smart TV.')">📧 Re-email Offer</button></td>
                         </tr>
                         <tr>
                             <td><strong>Ananya Rao</strong></td>
@@ -655,7 +722,7 @@
                             <td>Basic (Monthly)</td>
                             <td><span class="status-badge sent">Sent</span></td>
                             <td>Unsatisfied with Content</td>
-                            <td><button class="btn-small" onclick="sendDirectEmail('Ananya Rao', 'ananya.rao@example.com', 'Exit Survey')">📧 Send Exit Survey</button></td>
+                            <td><button class="btn-small" onclick="sendDirectEmail('Ananya Rao', 'ananya.rao@example.com', 'Exit Survey', 'Content Dissatisfaction: Favorite shows removed.')">📧 Send Exit Survey</button></td>
                         </tr>
                         <tr>
                             <td><strong>Neha Joshi</strong></td>
@@ -665,7 +732,7 @@
                             <td>Basic (Monthly)</td>
                             <td><span class="status-badge sent">Sent</span></td>
                             <td>Competitor Offer</td>
-                            <td><button class="btn-small" onclick="sendDirectEmail('Neha Joshi', 'neha.joshi@example.com', 'Exit Survey')">📧 Send Exit Survey</button></td>
+                            <td><button class="btn-small" onclick="sendDirectEmail('Neha Joshi', 'neha.joshi@example.com', 'Exit Survey', 'Competitor Offer: Better monthly pricing on competitor platform.')">📧 Send Exit Survey</button></td>
                         </tr>
                         <tr>
                             <td><strong>Amit Kumar</strong></td>
@@ -675,51 +742,61 @@
                             <td>Basic (Annual)</td>
                             <td><span class="status-badge sent">Sent</span></td>
                             <td>Service Dissatisfaction</td>
-                            <td><button class="btn-small" onclick="sendDirectEmail('Amit Kumar', 'amit.kumar@example.com', 'Exit Survey')">📧 Send Exit Survey</button></td>
+                            <td><button class="btn-small" onclick="sendDirectEmail('Amit Kumar', 'amit.kumar@example.com', 'Exit Survey', 'Service Issue: Customer support ticket delayed.')">📧 Send Exit Survey</button></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- NEW FEATURE: Live Sent Emails Outbox Drawer & Log Viewer -->
+        <!-- Live Sent Emails Outbox Stream Log -->
         <div class="table-section">
             <div class="section-header">
                 <h3>
-                    <span class="icon" style="color: var(--accent-yellow);">
-                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-                    </span>
-                    Live Sent Emails Log & Outbox Stream (SQLite Verified)
+                    <span class="icon" style="color: var(--accent-yellow);"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></span>
+                    Live Sent Emails Log & Outbox Stream (Click Any Email to Inspect)
                 </h3>
-                <span class="badge" id="emailCountBadge">Showing 6 Logged Emails</span>
+                <span class="badge" id="emailCountBadge">Showing 3 Outbox Entries</span>
             </div>
 
             <div class="outbox-container" id="outboxList">
-                <div class="email-log-item">
+                <div class="email-log-item" onclick="openEmailModal('Aarav Sharma', 'aarav.sharma@example.com', 'StreamFlix Care: We noticed you left - Help us improve, Aarav!', 'Dear Aarav, We noticed your StreamFlix Basic subscription was cancelled on 2024-09-15. Was it due to the recent price revision in Karnataka? Reply to receive 30% off your next 3 months!', 'Price Hike in Sep', 'Subscription too expensive after recent price revision in Karnataka.', '2024-09-16 14:30:00')">
                     <div class="email-header">
-                        <span class="email-recipient">Aarav Sharma &lt;aarav.sharma@example.com&gt;</span>
+                        <span class="email-recipient">
+                            <span class="icon" style="color: var(--accent-blue);"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></span>
+                            Aarav Sharma &lt;aarav.sharma@example.com&gt;
+                        </span>
                         <span class="email-time">Logged: 2024-09-16 14:30 | Status: Replied</span>
                     </div>
                     <div class="email-subject">Subject: StreamFlix Care: We noticed you left - Help us improve, Aarav!</div>
                     <div class="email-body-preview">Dear Aarav, We noticed your StreamFlix subscription was cancelled. Was it due to the recent price revision in Karnataka? Reply to receive 30% off your next 3 months!</div>
+                    <div class="click-hint">🔍 Click to inspect complete email & customer feedback reply details →</div>
                 </div>
 
-                <div class="email-log-item">
+                <div class="email-log-item" onclick="openEmailModal('Priya Patel', 'priya.patel@example.com', 'StreamFlix Exit Survey & Special Discount Offer', 'Hi Priya, could you tell us why you decided to leave StreamFlix? We would love to offer you 3 months at 50% off to stay with us.', 'Competitor Switch', 'Switched to rival competitor OTT app for annual bundle discount.', '2024-09-19 11:15:00')">
                     <div class="email-header">
-                        <span class="email-recipient">Priya Patel &lt;priya.patel@example.com&gt;</span>
+                        <span class="email-recipient">
+                            <span class="icon" style="color: var(--accent-blue);"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></span>
+                            Priya Patel &lt;priya.patel@example.com&gt;
+                        </span>
                         <span class="email-time">Logged: 2024-09-19 11:15 | Status: Replied</span>
                     </div>
                     <div class="email-subject">Subject: StreamFlix Exit Survey & Special Discount Offer</div>
                     <div class="email-body-preview">Hi Priya, could you tell us why you decided to leave? We would love to offer you 3 months at 50% off to stay on StreamFlix.</div>
+                    <div class="click-hint">🔍 Click to inspect complete email & customer feedback reply details →</div>
                 </div>
 
-                <div class="email-log-item">
+                <div class="email-log-item" onclick="openEmailModal('Rahul Verma', 'rahul.verma@example.com', 'We apologize for the playback lag issue', 'Dear Rahul, our engineering team resolved the streaming buffer issue on your device. We have credited 1 month free access to your account.', 'Technical Glitch', 'Video buffering during live matches forced me to cancel.', '2024-09-06 09:45:00')">
                     <div class="email-header">
-                        <span class="email-recipient">Rahul Verma &lt;rahul.verma@example.com&gt;</span>
+                        <span class="email-recipient">
+                            <span class="icon" style="color: var(--accent-blue);"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></span>
+                            Rahul Verma &lt;rahul.verma@example.com&gt;
+                        </span>
                         <span class="email-time">Logged: 2024-09-06 09:45 | Status: Replied</span>
                     </div>
                     <div class="email-subject">Subject: We apologize for the playback lag issue</div>
                     <div class="email-body-preview">Dear Rahul, our engineering team resolved the streaming buffer issue on your device. We have credited 1 month free access to your account.</div>
+                    <div class="click-hint">🔍 Click to inspect complete email & customer feedback reply details →</div>
                 </div>
             </div>
         </div>
@@ -728,9 +805,7 @@
         <div class="insights-grid">
             <div class="insight-box">
                 <h4>
-                    <span class="icon">
-                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-                    </span>
+                    <span class="icon"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></span>
                     Key Data Analytical Insights
                 </h4>
                 <ul>
@@ -743,9 +818,7 @@
 
             <div class="insight-box">
                 <h4>
-                    <span class="icon">
-                        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
-                    </span>
+                    <span class="icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></span>
                     Actionable Customer Retention Strategy
                 </h4>
                 <ul>
@@ -758,6 +831,30 @@
         </div>
     </div>
 
+    <!-- INTERACTIVE EMAIL INSPECTION MODAL -->
+    <div class="modal-overlay" id="emailModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>
+                    <span class="icon" style="color: var(--accent-blue);"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></span>
+                    Sent Email & Customer Reply Inspection
+                </h3>
+                <button class="close-btn" onclick="closeEmailModal()">&times;</button>
+            </div>
+            
+            <div class="modal-detail-row"><strong>Recipient:</strong> <span id="mRecipient"></span></div>
+            <div class="modal-detail-row"><strong>Dispatched:</strong> <span id="mTime"></span></div>
+            <div class="modal-detail-row"><strong>Subject:</strong> <span id="mSubject"></span></div>
+            <div class="modal-detail-row"><strong>Database Tag:</strong> <span style="color: var(--accent-green);">Verified in SQLite db_outreach_log</span></div>
+
+            <div class="modal-body-box" id="mBody"></div>
+
+            <div class="feedback-tag" id="mFeedbackBox">
+                <strong>Recorded Feedback Reply:</strong> <span id="mFeedback"></span>
+            </div>
+        </div>
+    </div>
+
     <script>
         function showAlert(msg) {
             const box = document.getElementById('alertBox');
@@ -766,35 +863,63 @@
             setTimeout(() => { box.style.display = 'none'; }, 4500);
         }
 
-        function appendSentEmailToOutbox(name, email, type) {
+        function openEmailModal(name, email, subject, body, reasonCategory, feedbackText, timeStr) {
+            document.getElementById('mRecipient').innerText = `${name} <${email}>`;
+            document.getElementById('mTime').innerText = timeStr || new Date().toLocaleString();
+            document.getElementById('mSubject').innerText = subject;
+            document.getElementById('mBody').innerText = body;
+            document.getElementById('mFeedback').innerText = `[${reasonCategory}] ${feedbackText}`;
+            document.getElementById('emailModal').style.display = 'flex';
+        }
+
+        function closeEmailModal() {
+            document.getElementById('emailModal').style.display = 'none';
+        }
+
+        function appendSentEmailToOutbox(name, email, subject, body, feedback) {
             const outbox = document.getElementById('outboxList');
             const now = new Date().toLocaleString();
             
             const newItem = document.createElement('div');
             newItem.className = 'email-log-item';
             newItem.style.borderColor = 'var(--accent-green)';
+            newItem.onclick = function() {
+                openEmailModal(name, email, subject, body, 'Automated Outreach', feedback, now);
+            };
             newItem.innerHTML = `
                 <div class="email-header">
-                    <span class="email-recipient">${name} &lt;${email}&gt;</span>
+                    <span class="email-recipient">
+                        <span class="icon" style="color: var(--accent-green);"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></span>
+                        ${name} &lt;${email}&gt;
+                    </span>
                     <span class="email-time">Dispatched: ${now} | Status: Logged in db_outreach_log</span>
                 </div>
-                <div class="email-subject">Subject: StreamFlix Retention Care - ${type} for ${name}</div>
-                <div class="email-body-preview">Dear ${name}, We noticed your recent cancellation. Reply to this email to claim your exclusive 30% discount offer or share feedback with our customer care team!</div>
+                <div class="email-subject">Subject: ${subject}</div>
+                <div class="email-body-preview">${body}</div>
+                <div class="click-hint">🔍 Click to inspect complete email & customer feedback reply details →</div>
             `;
             outbox.insertBefore(newItem, outbox.firstChild);
         }
 
-        function sendDirectEmail(name, email, type) {
-            showAlert(`📧 Retention email disaptched to <strong>${name}</strong> (${email})! Transaction logged in <code>db_outreach_log</code> table.`);
-            appendSentEmailToOutbox(name, email, type);
+        function sendDirectEmail(name, email, type, feedbackText) {
+            const subj = `StreamFlix Retention Care - ${type} for ${name}`;
+            const body = `Dear ${name},\n\nWe noticed your recent cancellation. Reply to this email to claim your exclusive 30% discount offer or share feedback with our customer care team!\n\nLogged Reason: ${type}\n\nWarm regards,\nStreamFlix Retention Team`;
+            
+            showAlert(`📧 Retention email dispatched to <strong>${name}</strong> (${email})! Transaction logged in <code>db_outreach_log</code> table.`);
+            appendSentEmailToOutbox(name, email, subj, body, feedbackText || 'Awaiting Customer Reply');
         }
 
         function sendBatchEmails() {
             showAlert(`⚡ Batch Retention Campaign Executed! Sent personalized retention surveys to 6 churned subscribers. Database outbox stream updated.`);
-            appendSentEmailToOutbox('Ananya Rao', 'ananya.rao@example.com', 'Exit Survey & 30% Discount');
-            appendSentEmailToOutbox('Neha Joshi', 'neha.joshi@example.com', 'Exit Survey & 30% Discount');
-            appendSentEmailToOutbox('Amit Kumar', 'amit.kumar@example.com', 'Annual Migration Deal');
+            appendSentEmailToOutbox('Ananya Rao', 'ananya.rao@example.com', 'StreamFlix Exit Survey & 30% Discount Offer', 'Hi Ananya, could you share why you cancelled your StreamFlix subscription? We offer 30% off your next 3 months.', 'Content Removal');
+            appendSentEmailToOutbox('Neha Joshi', 'neha.joshi@example.com', 'StreamFlix Special Retention Discount', 'Hi Neha, we noticed your subscription ended. Stay with us for $8.99/mo!', 'Competitor Offer');
+            appendSentEmailToOutbox('Amit Kumar', 'amit.kumar@example.com', 'StreamFlix Annual Plan Migration Deal', 'Hi Amit, claim your annual tier renewal deal today with priority customer care support.', 'Service Dissatisfaction');
         }
+
+        // Close modal when clicking outside modal-card
+        document.getElementById('emailModal').addEventListener('click', function(e) {
+            if (e.target === this) closeEmailModal();
+        });
 
         // Responsive Chart Base Options
         const chartOptionsBase = {
