@@ -12,12 +12,15 @@ def create_and_populate_db():
     cursor.execute("DROP TABLE IF EXISTS db_customer")
     cursor.execute("DROP TABLE IF EXISTS db_subscription")
     cursor.execute("DROP TABLE IF EXISTS db_support")
+    cursor.execute("DROP TABLE IF EXISTS db_outreach_log")
 
-    # Table 1: db_customer
+    # Table 1: db_customer (Enhanced with email and phone)
     cursor.execute("""
     CREATE TABLE db_customer (
         customerid INTEGER PRIMARY KEY,
         name TEXT NOT NULL,
+        email TEXT NOT NULL,
+        phone TEXT NOT NULL,
         country TEXT NOT NULL,
         State TEXT NOT NULL,
         gender TEXT NOT NULL,
@@ -59,46 +62,52 @@ def create_and_populate_db():
     )
     """)
 
-    # Synthetic Dataset matching precise benchmark numbers (21 total customers):
-    # 6 churned customers (6/21 = 28.57% ~ 28.6% Churn, 71.4% Retention)
-    # Monthly contracts: 9 total, 5 churned -> 5/9 = 55.56% ~ 55.6%
-    # Annual contracts: 12 total, 1 churned -> 1/12 = 8.33% ~ 8.3%
-    # Churn dates concentrated in September 2024 in Karnataka for Basic plans.
-    # Total Monthly Charges = ~395, Churned Charges = ~74 (18.7% ~ 18%)
-    # Total CLTV Lost = ~2047, Average Tenure = ~1451 days
+    # Table 4: db_outreach_log (NEW: Direct Email & Customer Response Tracking)
+    cursor.execute("""
+    CREATE TABLE db_outreach_log (
+        log_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        customerid INTEGER NOT NULL,
+        contact_date TEXT NOT NULL,
+        contact_type TEXT NOT NULL,
+        email_address TEXT NOT NULL,
+        email_subject TEXT NOT NULL,
+        email_body TEXT NOT NULL,
+        customer_feedback TEXT,
+        categorized_reason TEXT,
+        status TEXT NOT NULL,
+        FOREIGN KEY (customerid) REFERENCES db_customer(customerid)
+    )
+    """)
 
+    # Customers with explicit email and contact numbers
     customers = [
-        (101, "Aarav Sharma", "India", "Karnataka", "Male", "1990-05-14", "Movies, Sci-Fi", "560001"),
-        (102, "Priya Patel", "India", "Karnataka", "Female", "1994-08-22", "Drama, Romance", "560002"),
-        (103, "Rahul Verma", "India", "Karnataka", "Male", "1988-11-03", "Sports, Action", "560034"),
-        (104, "Ananya Rao", "India", "Karnataka", "Female", "1996-02-17", "Comedy, Documentaries", "560045"),
-        (105, "Rohan Gupta", "India", "Maharashtra", "Male", "1992-09-30", "Thriller, Tech", "400001"),
-        (106, "Sneha Kulkarni", "India", "Maharashtra", "Female", "1995-12-10", "Anime, Fantasy", "400012"),
-        (107, "Vikram Singh", "India", "Delhi", "Male", "1985-04-05", "News, Politics", "110001"),
-        (108, "Neha Joshi", "India", "Karnataka", "Female", "1998-07-19", "Music, Reality TV", "560068"),
-        (109, "Karan Reddy", "India", "Telangana", "Male", "1991-03-25", "Action, Gaming", "500001"),
-        (110, "Divya Nair", "India", "Kerala", "Female", "1993-10-12", "Drama, Classics", "682001"),
-        (111, "Amit Kumar", "India", "Karnataka", "Male", "1989-01-08", "Sports, Sci-Fi", "560078"),
-        (112, "Meera Sundaram", "India", "Tamil Nadu", "Female", "1997-06-30", "Independent, Art", "600001"),
-        (113, "Siddharth Das", "India", "West Bengal", "Male", "1987-08-14", "Documentaries, History", "700001"),
-        (114, "Pooja Malhotra", "India", "Delhi", "Female", "1996-11-28", "Fashion, Reality TV", "110016"),
-        (115, "Aditya Roy", "India", "Maharashtra", "Male", "1994-04-18", "Action, Comedy", "400050"),
-        (116, "Kavita Deshmukh", "India", "Maharashtra", "Female", "1991-02-09", "Romance, Drama", "411001"),
-        (117, "Rajesh Chawla", "India", "Punjab", "Male", "1986-12-01", "Sports, Action", "141001"),
-        (118, "Shreya Iyer", "India", "Karnataka", "Female", "1999-05-15", "Sci-Fi, Anime", "560092"),
-        (119, "Gaurav Mehta", "India", "Gujarat", "Male", "1993-09-04", "Finance, News", "380001"),
-        (120, "Ritu Sen", "India", "West Bengal", "Female", "1995-07-21", "Drama, Thriller", "700019"),
-        (121, "Tarun Bansal", "India", "Haryana", "Male", "1990-03-11", "Comedy, Sports", "122001")
+        (101, "Aarav Sharma", "aarav.sharma@example.com", "+91-9876543210", "India", "Karnataka", "Male", "1990-05-14", "Movies, Sci-Fi", "560001"),
+        (102, "Priya Patel", "priya.patel@example.com", "+91-9876543211", "India", "Karnataka", "Female", "1994-08-22", "Drama, Romance", "560002"),
+        (103, "Rahul Verma", "rahul.verma@example.com", "+91-9876543212", "India", "Karnataka", "Male", "1988-11-03", "Sports, Action", "560034"),
+        (104, "Ananya Rao", "ananya.rao@example.com", "+91-9876543213", "India", "Karnataka", "Female", "1996-02-17", "Comedy, Documentaries", "560045"),
+        (105, "Rohan Gupta", "rohan.gupta@example.com", "+91-9876543214", "India", "Maharashtra", "Male", "1992-09-30", "Thriller, Tech", "400001"),
+        (106, "Sneha Kulkarni", "sneha.kulkarni@example.com", "+91-9876543215", "India", "Maharashtra", "Female", "1995-12-10", "Anime, Fantasy", "400012"),
+        (107, "Vikram Singh", "vikram.singh@example.com", "+91-9876543216", "India", "Delhi", "Male", "1985-04-05", "News, Politics", "110001"),
+        (108, "Neha Joshi", "neha.joshi@example.com", "+91-9876543217", "India", "Karnataka", "Female", "1998-07-19", "Music, Reality TV", "560068"),
+        (109, "Karan Reddy", "karan.reddy@example.com", "+91-9876543218", "India", "Telangana", "Male", "1991-03-25", "Action, Gaming", "500001"),
+        (110, "Divya Nair", "divya.nair@example.com", "+91-9876543219", "India", "Kerala", "Female", "1993-10-12", "Drama, Classics", "682001"),
+        (111, "Amit Kumar", "amit.kumar@example.com", "+91-9876543220", "India", "Karnataka", "Male", "1989-01-08", "Sports, Sci-Fi", "560078"),
+        (112, "Meera Sundaram", "meera.sundaram@example.com", "+91-9876543221", "India", "Tamil Nadu", "Female", "1997-06-30", "Independent, Art", "600001"),
+        (113, "Siddharth Das", "siddharth.das@example.com", "+91-9876543222", "India", "West Bengal", "Male", "1987-08-14", "Documentaries, History", "700001"),
+        (114, "Pooja Malhotra", "pooja.malhotra@example.com", "+91-9876543223", "India", "Delhi", "Female", "1996-11-28", "Fashion, Reality TV", "110016"),
+        (115, "Aditya Roy", "aditya.roy@example.com", "+91-9876543224", "India", "Maharashtra", "Male", "1994-04-18", "Action, Comedy", "400050"),
+        (116, "Kavita Deshmukh", "kavita.deshmukh@example.com", "+91-9876543225", "India", "Maharashtra", "Female", "1991-02-09", "Romance, Drama", "411001"),
+        (117, "Rajesh Chawla", "rajesh.chawla@example.com", "+91-9876543226", "India", "Punjab", "Male", "1986-12-01", "Sports, Action", "141001"),
+        (118, "Shreya Iyer", "shreya.iyer@example.com", "+91-9876543227", "India", "Karnataka", "Female", "1999-05-15", "Sci-Fi, Anime", "560092"),
+        (119, "Gaurav Mehta", "gaurav.mehta@example.com", "+91-9876543228", "India", "Gujarat", "Male", "1993-09-04", "Finance, News", "380001"),
+        (120, "Ritu Sen", "ritu.sen@example.com", "+91-9876543229", "India", "West Bengal", "Female", "1995-07-21", "Drama, Thriller", "700019"),
+        (121, "Tarun Bansal", "tarun.bansal@example.com", "+91-9876543230", "India", "Haryana", "Male", "1990-03-11", "Comedy, Sports", "122001")
     ]
 
-    cursor.executemany("INSERT INTO db_customer VALUES (?,?,?,?,?,?,?,?)", customers)
+    cursor.executemany("INSERT INTO db_customer VALUES (?,?,?,?,?,?,?,?,?,?)", customers)
 
     # Subscriptions details
-    # Churned: 101, 102, 103, 104, 108, 111 (6 churned out of 21)
-    # Monthly churned: 101, 102, 103, 104, 108 (5/9 = 55.6%)
-    # Annual churned: 111 (1/12 = 8.3%)
     subscriptions = [
-        # customerid, start_date, sub_type, renewal_date, plan_type, contract_type, canc_date, canc_reason, monthly_charges, cltv, churn_score
         (101, "2020-01-15", "Streaming", "2024-09-15", "Basic", "Monthly", "2024-09-15", "Price Hike in Sep", 14.99, 320.00, 85),
         (102, "2020-03-10", "Streaming", "2024-09-18", "Basic", "Monthly", "2024-09-18", "Moved to Competitor", 12.50, 290.00, 90),
         (103, "2019-11-20", "Streaming", "2024-09-05", "Basic", "Monthly", "2024-09-05", "Tech Issues / Streaming Lag", 11.99, 350.00, 78),
@@ -124,7 +133,7 @@ def create_and_populate_db():
 
     cursor.executemany("INSERT INTO db_subscription VALUES (?,?,?,?,?,?,?,?,?,?,?)", subscriptions)
 
-    # Support / Complaint records
+    # Support records
     supports = [
         (101, "2024-08-30", 1, 1, "Price Hike", "Complained about sudden tariff increase in Karnataka"),
         (101, "2024-09-12", 1, 1, "Billing Error", "Double charged for monthly basic renewal"),
@@ -144,9 +153,30 @@ def create_and_populate_db():
     VALUES (?,?,?,?,?,?)
     """, supports)
 
+    # Pre-populate initial outreach log examples
+    outreach_records = [
+        (101, "2024-09-16", "Exit Survey & 20% Retention Offer", "aarav.sharma@example.com", 
+         "We miss you at StreamFlix - Help us improve!", 
+         "Hi Aarav, we noticed your subscription cancellation. Was it due to the recent price adjustment?", 
+         "Subscription got too expensive after recent price revision in Karnataka.", "Price Sensitivity", "Replied - Feedback Recorded"),
+        (102, "2024-09-19", "Exit Survey Email", "priya.patel@example.com", 
+         "StreamFlix Exit Survey & Special Discount Offer", 
+         "Hi Priya, could you tell us why you decided to leave? We would love to offer you 3 months at 50% off.", 
+         "Switched to competitor due to annual combo deal.", "Competitor Switch", "Replied - Feedback Recorded"),
+        (103, "2024-09-06", "Technical Support Check-in Email", "rahul.verma@example.com", 
+         "We apologize for the playback lag issue", 
+         "Hi Rahul, our engineering team resolved the streaming buffer issue on your device.", 
+         "Video buffering during live matches forced me to cancel.", "Technical Glitch", "Replied - Feedback Recorded")
+    ]
+
+    cursor.executemany("""
+    INSERT INTO db_outreach_log (customerid, contact_date, contact_type, email_address, email_subject, email_body, customer_feedback, categorized_reason, status)
+    VALUES (?,?,?,?,?,?,?,?,?)
+    """, outreach_records)
+
     conn.commit()
     conn.close()
-    print("Database customer_churn.db created and populated successfully!")
+    print("Database customer_churn.db created with enhanced Customer Contact & Email Outreach schema!")
 
 if __name__ == "__main__":
     create_and_populate_db()
