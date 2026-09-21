@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ChurnGuard – Customer Churn Analysis & Retention Management System</title>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-color: #0b132b;
+            --sidebar-bg: #1c2541;
+            --card-bg: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-blue: #38bdf8;
+            --accent-green: #4ade80;
+            --accent-red: #f87171;
+            --accent-purple: #c084fc;
+            --accent-yellow: #fbbf24;
+            --border-color: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-brand {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .brand-logo {
+            width: 34px;
+            height: 34px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0f172a;
+            font-weight: 800;
+            font-size: 18px;
+        }
+
+        .brand-text {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(to right, #38bdf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 16px 12px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .menu-item {
+            margin-bottom: 4px;
+        }
+
+        .menu-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .menu-link:hover, .menu-link.active {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--accent-blue);
+        }
+
+        .menu-link.active {
+            font-weight: 600;
+        }
+
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid var(--border-color);
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Main Content Layout */
+        .main-wrapper {
+            margin-left: 260px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        /* Topbar */
+        topbar {
+            height: 64px;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 6px 12px;
+            width: 320px;
+        }
+
+        .search-box input {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            outline: none;
+            width: 100%;
+            font-size: 13px;
+            margin-left: 8px;
+        }
+
+        .topbar-controls {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .role-badge {
+            background: rgba(192, 132, 252, 0.15);
+            color: var(--accent-purple);
+            border: 1px solid rgba(192, 132, 252, 0.3);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+            box-shadow: 0 0 8px var(--accent-green);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+
+        /* Content Container */
+        .content-body {
+            padding: 24px;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Alert Box */
+        .alert-box {
+            display: none;
+            background: rgba(74, 222, 128, 0.15);
+            border: 1px solid var(--accent-green);
+            color: var(--accent-green);
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Metric Cards Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .metric-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease;
+        }
+
+        .metric-card:hover { transform: translateY(-2px); }
+
+        .metric-title {
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .metric-value {
+            font-size: clamp(22px, 3.5vw, 28px);
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .metric-value.red { color: var(--accent-red); }
+        .metric-value.green { color: var(--accent-green); }
+        .metric-value.blue { color: var(--accent-blue); }
+        .metric-value.purple { color: var(--accent-purple); }
+        .metric-value.yellow { color: var(--accent-yellow); }
+
+        .metric-sub {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .chart-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .chart-card h3 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 240px;
+            width: 100%;
+        }
+
+        /* Controls Toolbar & Filters */
+        .toolbar {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        select, button {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        select:focus { border-color: var(--accent-blue); }
+
+        .btn-primary {
+            background: var(--accent-blue);
+            color: #0f172a;
+            border: none;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .btn-primary:hover { background: #7dd3fc; }
+
+        .btn-outline {
+            border: 1px solid var(--accent-blue);
+            color: var(--accent-blue);
+            background: rgba(56, 189, 248, 0.1);
+        }
+
+        .btn-outline:hover {
+            background: var(--accent-blue);
+            color: #0f172a;
+        }
+
+        /* Responsive Table */
+        .table-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13px;
+            min-width: 800px;
+        }
+
+        th {
+            background: rgba(15, 23, 42, 0.9);
+            color: var(--text-secondary);
+            padding: 12px 14px;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        tr:hover { background: rgba(255, 255, 255, 0.02); }
+
+        .risk-tag {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .risk-high { background: rgba(248, 113, 113, 0.2); color: var(--accent-red); }
+        .risk-medium { background: rgba(251, 191, 36, 0.2); color: var(--accent-yellow); }
+        .risk-low { background: rgba(74, 222, 128, 0.2); color: var(--accent-green); }
+
+        /* MODAL POPUPS */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(6px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            max-width: 680px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 14px;
+            margin-bottom: 16px;
+        }
+
+        .modal-header h3 { font-size: 18px; color: var(--text-primary); }
+        .close-btn { background: none; border: none; color: var(--text-secondary); font-size: 24px; cursor: pointer; }
+        .close-btn:hover { color: var(--accent-red); }
+
+        /* Timeline Items */
+        .timeline-container {
+            border-left: 2px solid var(--border-color);
+            padding-left: 16px;
+            margin-top: 14px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -21px;
+            top: 4px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+        }
+
+        .timeline-date { font-size: 11px; color: var(--text-secondary); }
+        .timeline-event { font-weight: 600; font-size: 13px; color: var(--text-primary); }
+        .timeline-detail { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+        /* Responsiveness */
+        @media (max-width: 992px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .main-wrapper { margin-left: 0; }
+            .charts-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-logo">🛡️</div>
+            <div class="brand-text">ChurnGuard</div>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li class="menu-item"><a class="menu-link active" onclick="switchSection('dashboard')">📊 Executive Dashboard</a></li>
+            <li class="menu-item"><a class="menu-link" onclick="switchSection('customers')">👥 Customer Explorer</a></li>
+            <li class="menu-item"><a class="menu-link" onclick="switchSection('risk')">🎯 ML Risk Scoring</a></li>
+            <li class="menu-item"><a class="menu-link" onclick="switchSection('campaigns')">⚡ Retention Campaigns</a></li>
+            <li class="menu-item"><a class="menu-link" onclick="switchSection('feedback')">💬 Exit Survey Feedback</a></li>
+            <li class="menu-item"><a class="menu-link" onclick="switchSection('outbox')">📨 Email Outbox Stream</a></li>
+            <li class="menu-item"><a class="menu-link" onclick="exportReport('csv')">📥 Export CSV Report</a></li>
+            <li class="menu-item"><a class="menu-link" onclick="exportReport('excel')">📊 Export Excel Report</a></li>
+        </ul>
+
+        <div class="sidebar-footer">
+            ChurnGuard v2.0 • Enterprise Edition
+        </div>
+    </div>
+
+    <!-- Main App Body -->
+    <div class="main-wrapper">
+        <topbar>
+            <div class="search-box">
+                🔍 <input type="text" id="globalSearch" placeholder="Search subscriber by name or email..." onkeyup="handleGlobalSearch(event)">
+            </div>
+            <div class="topbar-controls">
+                <div class="badge"><span class="pulse-dot"></span> System Connected</div>
+                <div class="role-badge">Role: Retention Manager</div>
+            </div>
+        </topbar>
+
+        <div class="content-body">
+            <div id="alertBox" class="alert-box"></div>
+
+            <!-- EXECUTIVE DASHBOARD SECTION -->
+            <div id="sec-dashboard">
+                <!-- Summary Metric Cards -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-title">Overall Churn Rate</div>
+                        <div class="metric-value red" id="kpiChurnRate">28.6%</div>
+                        <div class="metric-sub" id="kpiChurnSub">6 of 21 Subscribers</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Retention Rate</div>
+                        <div class="metric-value green" id="kpiRetentionRate">71.4%</div>
+                        <div class="metric-sub" id="kpiRetentionSub">15 Active Subscribers</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Monthly Contract Churn</div>
+                        <div class="metric-value red" id="kpiMonthlyChurn">55.6%</div>
+                        <div class="metric-sub">Vs 8.3% Annual (6.7x higher)</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Average ARPU</div>
+                        <div class="metric-value blue" id="kpiArpu">$19.27</div>
+                        <div class="metric-sub">Per Active Subscriber / mo</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">Monthly Revenue Loss</div>
+                        <div class="metric-value red" id="kpiRevenueLoss">$73.94</div>
+                        <div class="metric-sub">20.4% Revenue Leakage</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-title">ML Prediction Accuracy</div>
+                        <div class="metric-value purple" id="kpiMlAcc">100.0%</div>
+                        <div class="metric-sub">Random Forest Engine</div>
+                    </div>
+                </div>
+
+                <!-- Charts Suite -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3>Retention vs Churn Distribution</h3>
+                        <div class="chart-container"><canvas id="retentionChart"></canvas></div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Churn Rate by Contract Structure (%)</h3>
+                        <div class="chart-container"><canvas id="contractChart"></canvas></div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Churn Rate by Subscription Plan Tier</h3>
+                        <div class="chart-container"><canvas id="planChart"></canvas></div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Support Escalation Impact on Churn</h3>
+                        <div class="chart-container"><canvas id="escalationChart"></canvas></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CUSTOMER EXPLORER SECTION -->
+            <div id="sec-customers" class="table-card">
+                <div class="toolbar">
+                    <div class="filter-group">
+                        <label>Filter Risk:</label>
+                        <select id="filterRisk" onchange="loadCustomers()">
+                            <option value="">All Risk Tiers</option>
+                            <option value="HIGH">High Risk</option>
+                            <option value="MEDIUM">Medium Risk</option>
+                            <option value="LOW">Low Risk</option>
+                        </select>
+
+                        <label>Contract:</label>
+                        <select id="filterContract" onchange="loadCustomers()">
+                            <option value="">All Contracts</option>
+                            <option value="Monthly">Monthly</option>
+                            <option value="Annual">Annual</option>
+                        </select>
+
+                        <label>Status:</label>
+                        <select id="filterStatus" onchange="loadCustomers()">
+                            <option value="">All Statuses</option>
+                            <option value="Churned">Churned Only</option>
+                            <option value="Active">Active Only</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <button class="btn-primary" onclick="openCampaignModal()">⚡ Launch Targeted Campaign</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Subscriber</th>
+                                <th>Email Address</th>
+                                <th>State</th>
+                                <th>Plan & Contract</th>
+                                <th>Monthly Charge</th>
+                                <th>Risk Score (0-100)</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customerTableBody">
+                            <!-- Populated via JS API -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- EMAIL OUTBOX STREAM LOG SECTION -->
+            <div id="sec-outbox" class="table-card">
+                <div class="toolbar">
+                    <h3>📨 Live Sent Emails Stream (SQLite Logged)</h3>
+                    <button class="btn-outline" onclick="loadOutbox()">🔄 Refresh Outbox</button>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Log ID</th>
+                                <th>Customer ID</th>
+                                <th>Recipient Email</th>
+                                <th>Subject</th>
+                                <th>Dispatched Time</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="outboxTableBody">
+                            <!-- Populated via JS API -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 1: CUSTOMER PROFILE & TIMELINE -->
+    <div class="modal-overlay" id="profileModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>👤 Customer Profile & Churn Risk Intelligence</h3>
+                <button class="close-btn" onclick="closeModal('profileModal')">&times;</button>
+            </div>
+            
+            <div id="profileDetails">
+                <!-- Populated via API -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: EMAIL PREVIEW & SEND -->
+    <div class="modal-overlay" id="emailModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>📧 Email Preview & Delivery Dispatch</h3>
+                <button class="close-btn" onclick="closeModal('emailModal')">&times;</button>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <label style="font-size: 12px; color: var(--text-secondary);">Select Email Template:</label>
+                <select id="emailTemplateSelect" style="width: 100%; margin-top: 4px;" onchange="updateEmailPreview()">
+                    <option value="exit_survey">Exit Survey & Feedback Request</option>
+                    <option value="retention_offer">30% Off Retention Discount Offer</option>
+                    <option value="price_sensitivity">Price Concern & Annual Tier Protection</option>
+                    <option value="competitor_match">Competitor Deal Match Campaign</option>
+                    <option value="service_recovery">Priority Support & Service Recovery</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 12px;">
+                <label style="font-size: 12px; color: var(--text-secondary);">Subject Line:</label>
+                <input type="text" id="emailSubjectInput" style="width: 100%; background: #0f172a; border: 1px solid var(--border-color); color: white; padding: 8px; border-radius: 6px; margin-top: 4px;">
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <label style="font-size: 12px; color: var(--text-secondary);">Email Body Preview:</label>
+                <textarea id="emailBodyInput" style="width: 100%; height: 160px; background: #0f172a; border: 1px solid var(--border-color); color: white; padding: 10px; border-radius: 6px; margin-top: 4px; font-family: monospace; font-size: 12px;"></textarea>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button onclick="closeModal('emailModal')">Cancel</button>
+                <button class="btn-primary" onclick="sendCustomEmail()">⚡ Send Email Now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: CAMPAIGN CREATOR -->
+    <div class="modal-overlay" id="campaignModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>⚡ Launch Retention Campaign</h3>
+                <button class="close-btn" onclick="closeModal('campaignModal')">&times;</button>
+            </div>
+            <div style="margin-bottom: 12px;">
+                <label style="font-size: 12px; color: var(--text-secondary);">Campaign Name:</label>
+                <input type="text" id="campName" value="Price Sensitivity Campaign" style="width: 100%; background: #0f172a; border: 1px solid var(--border-color); color: white; padding: 8px; border-radius: 6px; margin-top: 4px;">
+            </div>
+            <div style="margin-bottom: 16px;">
+                <label style="font-size: 12px; color: var(--text-secondary);">Target Audience Segment:</label>
+                <select id="campSegment" style="width: 100%; margin-top: 4px;">
+                    <option value="High Risk Monthly">High Risk + Monthly Basic Tier</option>
+                    <option value="Karnataka Region">Karnataka Churned Subscribers</option>
+                    <option value="All Churned">All Churned Subscribers</option>
+                </select>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button onclick="closeModal('campaignModal')">Cancel</button>
+                <button class="btn-primary" onclick="executeCampaign()">Launch Campaign</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentCustomerId = null;
+
+        function showAlert(msg) {
+            const box = document.getElementById('alertBox');
+            box.innerHTML = msg;
+            box.style.display = 'block';
+            setTimeout(() => { box.style.display = 'none'; }, 4500);
+        }
+
+        function switchSection(secName) {
+            document.querySelectorAll('.menu-link').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('[id^="sec-"]').forEach(el => el.style.display = 'none');
+            
+            if (secName === 'dashboard') {
+                document.getElementById('sec-dashboard').style.display = 'block';
+            } else if (secName === 'customers' || secName === 'risk') {
+                document.getElementById('sec-customers').style.display = 'block';
+            } else if (secName === 'outbox') {
+                document.getElementById('sec-outbox').style.display = 'block';
+                loadOutbox();
+            } else {
+                document.getElementById('sec-dashboard').style.display = 'block';
+            }
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        // Fetch Dashboard KPIs
+        async function loadDashboard() {
+            const res = await fetch('/api/dashboard');
+            const data = await res.json();
+            
+            document.getElementById('kpiChurnRate').innerText = `${data.churn_rate}%`;
+            document.getElementById('kpiChurnSub').innerText = `${data.churned_customers} of ${data.total_customers} Subscribers`;
+            document.getElementById('kpiRetentionRate').innerText = `${data.retention_rate}%`;
+            document.getElementById('kpiRetentionSub').innerText = `${data.active_customers} Active Subscribers`;
+            document.getElementById('kpiMonthlyChurn').innerText = `${data.monthly_churn_rate}%`;
+            document.getElementById('kpiArpu').innerText = `$${data.arpu}`;
+            document.getElementById('kpiRevenueLoss').innerText = `$${data.revenue_loss}`;
+            document.getElementById('kpiMlAcc').innerText = `${data.ml_accuracy}%`;
+
+            renderCharts(data);
+        }
+
+        // Fetch Customer Table
+        async function loadCustomers() {
+            const search = document.getElementById('globalSearch').value;
+            const risk = document.getElementById('filterRisk').value;
+            const contract = document.getElementById('filterContract').value;
+            const status = document.getElementById('filterStatus').value;
+
+            const url = `/api/customers?search=${encodeURIComponent(search)}&risk=${risk}&contract=${contract}&status=${status}`;
+            const res = await fetch(url);
+            const data = await res.json();
+
+            const tbody = document.getElementById('customerTableBody');
+            tbody.innerHTML = '';
+
+            data.customers.forEach(c => {
+                const tr = document.createElement('tr');
+                const riskClass = c.risk_level === 'HIGH' ? 'risk-high' : (c.risk_level === 'MEDIUM' ? 'risk-medium' : 'risk-low');
+                const statusBadge = c.is_churned ? '<span style="color:var(--accent-red); font-weight:600;">Churned</span>' : '<span style="color:var(--accent-green); font-weight:600;">Active</span>';
+
+                tr.innerHTML = `
+                    <td><strong>${c.name}</strong></td>
+                    <td>${c.email}</td>
+                    <td>${c.State}</td>
+                    <td>${c.plan_type} (${c.contract_type})</td>
+                    <td>$${c.monthly_charges}</td>
+                    <td><span class="risk-tag ${riskClass}">${c.churn_score} / 100 (${c.risk_level})</span></td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <button class="btn-outline" onclick="openProfileModal(${c.customerid})">👤 Profile</button>
+                        <button class="btn-primary" onclick="openEmailModal(${c.customerid})">📧 Email</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Open Profile Modal & Render Activity Timeline
+        async function openProfileModal(custId) {
+            const res = await fetch(`/api/customer/${custId}`);
+            const data = await res.json();
+            
+            const c = data.customer;
+            const ml = data.ml_risk;
+
+            let html = `
+                <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
+                    <div>
+                        <h4 style="font-size:18px; color:var(--text-primary);">${c.name}</h4>
+                        <p style="font-size:13px; color:var(--text-secondary);">${c.email} | ${c.phone} | ${c.State}</p>
+                    </div>
+                    <div style="text-align:right;">
+                        <span class="risk-tag risk-${ml.risk_tier.toLowerCase()}">${ml.risk_score} / 100 (${ml.risk_tier} RISK)</span>
+                        <p style="font-size:11px; color:var(--text-secondary); margin-top:4px;">ML Churn Prob: ${ml.churn_probability}%</p>
+                    </div>
+                </div>
+
+                <div style="background:#0f172a; padding:12px; border-radius:8px; margin-bottom:16px; font-size:13px;">
+                    <strong>💡 AI Recommended Retention Action:</strong>
+                    <p style="color:var(--accent-blue); margin-top:4px;">${data.recommended_action}</p>
+                </div>
+
+                <h5 style="color:var(--accent-blue); margin-bottom:8px;">Customer Activity Timeline:</h5>
+                <div class="timeline-container">
+            `;
+
+            data.activity_timeline.forEach(t => {
+                html += `
+                    <div class="timeline-item">
+                        <div class="timeline-date">${t.date}</div>
+                        <div class="timeline-event">${t.event}</div>
+                        <div class="timeline-detail">${t.detail}</div>
+                    </div>
+                `;
+            });
+
+            html += `</div>`;
+            document.getElementById('profileDetails').innerHTML = html;
+            document.getElementById('profileModal').style.display = 'flex';
+        }
+
+        // Open Email Preview Modal
+        async function openEmailModal(custId) {
+            currentCustomerId = custId;
+            await updateEmailPreview();
+            document.getElementById('emailModal').style.display = 'flex';
+        }
+
+        async function updateEmailPreview() {
+            if (!currentCustomerId) return;
+            const tKey = document.getElementById('emailTemplateSelect').value;
+            const res = await fetch('/api/email/preview', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ customer_id: currentCustomerId, template_key: tKey })
+            });
+            const data = await res.json();
+            document.getElementById('emailSubjectInput').value = data.subject;
+            document.getElementById('emailBodyInput').value = data.body;
+        }
+
+        async function sendCustomEmail() {
+            const tKey = document.getElementById('emailTemplateSelect').value;
+            const subj = document.getElementById('emailSubjectInput').value;
+            const body = document.getElementById('emailBodyInput').value;
+
+            const res = await fetch('/api/email/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    customer_id: currentCustomerId,
+                    template_key: tKey,
+                    custom_subject: subj,
+                    custom_body: body
+                })
+            });
+            const data = await res.json();
+            closeModal('emailModal');
+            showAlert(`⚡ Email Dispatched to ${data.email}! Message ID: ${data.message_id} (${data.note})`);
+        }
+
+        // Load Live Outbox
+        async function loadOutbox() {
+            const res = await fetch('/api/email/outbox');
+            const data = await res.json();
+            const tbody = document.getElementById('outboxTableBody');
+            tbody.innerHTML = '';
+
+            data.logs.forEach(l => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>#${l.log_id}</td>
+                    <td>#${l.customerid} (${l.name})</td>
+                    <td>${l.email_address}</td>
+                    <td>${l.email_subject}</td>
+                    <td>${l.contact_date}</td>
+                    <td><span style="color:var(--accent-green); font-weight:600;">${l.status}</span></td>
+                    <td><button class="btn-outline" onclick="alert('${l.email_body.replace(/'/g, "\\'")}')">🔍 Inspect</button></td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function exportReport(fmt) {
+            window.location.href = `/api/reports/export?format=${fmt}`;
+        }
+
+        function handleGlobalSearch(e) {
+            loadCustomers();
+        }
+
+        // Charts Engine
+        function renderCharts(data) {
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#94a3b8' } } },
+                scales: { x: { ticks: { color: '#94a3b8' } }, y: { ticks: { color: '#94a3b8' } } }
+            };
+
+            new Chart(document.getElementById('retentionChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Retained (71.4%)', 'Churned (28.6%)'],
+                    datasets: [{ data: [data.active_customers, data.churned_customers], backgroundColor: ['#4ade80', '#f87171'] }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            new Chart(document.getElementById('contractChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Monthly Contract', 'Annual Contract'],
+                    datasets: [{ label: 'Churn Rate (%)', data: [data.monthly_churn_rate, data.annual_churn_rate], backgroundColor: ['#f87171', '#38bdf8'] }]
+                },
+                options: chartOptions
+            });
+
+            new Chart(document.getElementById('planChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['Basic Tier', 'Standard Tier', 'Premium Tier'],
+                    datasets: [{ label: 'Churn Rate (%)', data: [71.4, 0.0, 0.0], backgroundColor: ['#f87171', '#38bdf8', '#c084fc'] }]
+                },
+                options: chartOptions
+            });
+
+            new Chart(document.getElementById('escalationChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['No Escalation (0)', 'Escalated Complaints (≥1)'],
+                    datasets: [{ label: 'Churn Rate (%)', data: [0.0, 100.0], backgroundColor: ['#4ade80', '#f87171'] }]
+                },
+                options: chartOptions
+            });
+        }
+
+        window.onload = function() {
+            loadDashboard();
+            loadCustomers();
+        };
+    </script>
+</body>
+</html>
