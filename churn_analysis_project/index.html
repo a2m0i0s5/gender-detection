@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Churn Analysis & Customer Intelligence Dashboard</title>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-blue: #38bdf8;
+            --accent-red: #f87171;
+            --accent-green: #4ade80;
+            --accent-purple: #c084fc;
+            --border-color: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            padding: 24px;
+            line-height: 1.5;
+        }
+
+        header {
+            margin-bottom: 28px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .badge {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--accent-blue);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        /* Metrics Grid */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .metric-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .metric-title {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .metric-value.red { color: var(--accent-red); }
+        .metric-value.green { color: var(--accent-green); }
+        .metric-value.blue { color: var(--accent-blue); }
+        .metric-value.purple { color: var(--accent-purple); }
+
+        .metric-sub {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Charts Grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .chart-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        .chart-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 260px;
+            width: 100%;
+        }
+
+        /* Table Section */
+        .table-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 28px;
+        }
+
+        .table-section h3 {
+            font-size: 18px;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background: rgba(15, 23, 42, 0.6);
+            color: var(--text-secondary);
+            padding: 12px;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-badge.churned {
+            background: rgba(248, 113, 113, 0.2);
+            color: var(--accent-red);
+        }
+
+        .status-badge.high-risk {
+            background: rgba(251, 146, 60, 0.2);
+            color: #fb923c;
+        }
+
+        /* Insights Section */
+        .insights-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .insight-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .insight-box h4 {
+            color: var(--accent-blue);
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .insight-box ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .insight-box li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div>
+            <h1>Churn Analysis & Customer Intelligence</h1>
+            <p>OTT Subscription Platform • Analytics & Retention Insights (20+ KPIs)</p>
+        </div>
+        <div class="badge">Live Executive Dashboard</div>
+    </header>
+
+    <!-- Top Metrics -->
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-title">Overall Churn Rate</div>
+            <div class="metric-value red">28.6%</div>
+            <div class="metric-sub">6 of 21 Subscribers</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-title">Retention Rate</div>
+            <div class="metric-value green">71.4%</div>
+            <div class="metric-sub">15 Active Subscribers</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-title">Monthly Churn</div>
+            <div class="metric-value red">55.6%</div>
+            <div class="metric-sub">Vs 8.3% Annual (6.7x higher)</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-title">Average ARPU</div>
+            <div class="metric-value blue">$19.27</div>
+            <div class="metric-sub">Per Active Subscriber / mo</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-title">Monthly Revenue Loss</div>
+            <div class="metric-value red">$73.94</div>
+            <div class="metric-sub">20.4% Revenue Leakage</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-title">Cumulative CLTV Lost</div>
+            <div class="metric-value purple">$2,047</div>
+            <div class="metric-sub">Attributed to Churned Users</div>
+        </div>
+    </div>
+
+    <!-- Charts Section -->
+    <div class="charts-grid">
+        <div class="chart-card">
+            <h3>Retention vs Churn Distribution</h3>
+            <div class="chart-container">
+                <canvas id="retentionChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h3>Churn Rate by Contract Type (%)</h3>
+            <div class="chart-container">
+                <canvas id="contractChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h3>Churn Rate by Subscription Plan Tier</h3>
+            <div class="chart-container">
+                <canvas id="planChart"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h3>Support Escalation Impact on Churn</h3>
+            <div class="chart-container">
+                <canvas id="escalationChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- High Risk & Churned Subscribers Table -->
+    <div class="table-section">
+        <h3>High-Risk & Churned Customer Priority List</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Customer ID</th>
+                    <th>Name</th>
+                    <th>State</th>
+                    <th>Plan Tier</th>
+                    <th>Contract</th>
+                    <th>Monthly Fee</th>
+                    <th>CLTV</th>
+                    <th>Status</th>
+                    <th>Cancellation Driver</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>#101</td>
+                    <td>Aarav Sharma</td>
+                    <td>Karnataka</td>
+                    <td>Basic</td>
+                    <td>Monthly</td>
+                    <td>$14.99</td>
+                    <td>$320</td>
+                    <td><span class="status-badge churned">Churned</span></td>
+                    <td>Price Hike in Sep</td>
+                </tr>
+                <tr>
+                    <td>#102</td>
+                    <td>Priya Patel</td>
+                    <td>Karnataka</td>
+                    <td>Basic</td>
+                    <td>Monthly</td>
+                    <td>$12.50</td>
+                    <td>$290</td>
+                    <td><span class="status-badge churned">Churned</span></td>
+                    <td>Moved to Competitor</td>
+                </tr>
+                <tr>
+                    <td>#103</td>
+                    <td>Rahul Verma</td>
+                    <td>Karnataka</td>
+                    <td>Basic</td>
+                    <td>Monthly</td>
+                    <td>$11.99</td>
+                    <td>$350</td>
+                    <td><span class="status-badge churned">Churned</span></td>
+                    <td>Tech Issues / Streaming Lag</td>
+                </tr>
+                <tr>
+                    <td>#104</td>
+                    <td>Ananya Rao</td>
+                    <td>Karnataka</td>
+                    <td>Basic</td>
+                    <td>Monthly</td>
+                    <td>$13.00</td>
+                    <td>$240</td>
+                    <td><span class="status-badge churned">Churned</span></td>
+                    <td>Unsatisfied with Content</td>
+                </tr>
+                <tr>
+                    <td>#108</td>
+                    <td>Neha Joshi</td>
+                    <td>Karnataka</td>
+                    <td>Basic</td>
+                    <td>Monthly</td>
+                    <td>$11.50</td>
+                    <td>$210</td>
+                    <td><span class="status-badge churned">Churned</span></td>
+                    <td>Competitor Offer</td>
+                </tr>
+                <tr>
+                    <td>#111</td>
+                    <td>Amit Kumar</td>
+                    <td>Karnataka</td>
+                    <td>Basic</td>
+                    <td>Annual</td>
+                    <td>$9.96</td>
+                    <td>$637</td>
+                    <td><span class="status-badge churned">Churned</span></td>
+                    <td>Service Dissatisfaction</td>
+                </tr>
+                <tr>
+                    <td>#118</td>
+                    <td>Shreya Iyer</td>
+                    <td>Karnataka</td>
+                    <td>Basic</td>
+                    <td>Monthly</td>
+                    <td>$12.00</td>
+                    <td>$220</td>
+                    <td><span class="status-badge high-risk">At Risk (48)</span></td>
+                    <td>Inquired Tier Upgrade</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Insights & Action Items -->
+    <div class="insights-grid">
+        <div class="insight-box">
+            <h4>Key Data Analytical Insights</h4>
+            <ul>
+                <li><strong>Contract Disparity:</strong> Monthly contract subscribers churn at 55.6%, compared to only 8.3% for Annual contract holders.</li>
+                <li><strong>Geographical Clustering:</strong> 100% of September 2024 churn instances originated from Karnataka state due to localized price friction.</li>
+                <li><strong>Plan Tier Vulnerability:</strong> Basic tier subscribers account for all churn events, with zero churn in Standard or Premium annual tiers.</li>
+                <li><strong>Support Escalation:</strong> Subscribers with 1+ escalated support complaints had a 100% churn rate vs 0% for non-escalated tickets.</li>
+            </ul>
+        </div>
+
+        <div class="insight-box">
+            <h4>Actionable Growth Recommendations</h4>
+            <ul>
+                <li><strong>Contract Migration Campaign:</strong> Offer a 15% discount incentive to convert Monthly Basic users into Annual Standard plans.</li>
+                <li><strong>Proactive Resolution SLA:</strong> Implement a strict 24-hour SLA for support ticket escalations in high-density regions like Karnataka.</li>
+                <li><strong>Win-Back Outreach:</strong> Deploy targeted email/SMS offers highlighting exclusive content to recovering former Basic subscribers.</li>
+                <li><strong>Risk Score Priority:</strong> Automatically route customers with churn scores > 40 directly to senior retention specialists.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Chart 1: Donut Retention Chart
+        new Chart(document.getElementById('retentionChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Retained (71.4%)', 'Churned (28.6%)'],
+                datasets: [{
+                    data: [15, 6],
+                    backgroundColor: ['#4ade80', '#f87171'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { labels: { color: '#94a3b8' } }
+                }
+            }
+        });
+
+        // Chart 2: Contract Type Churn
+        new Chart(document.getElementById('contractChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Monthly Contract', 'Annual Contract'],
+                datasets: [{
+                    label: 'Churn Rate (%)',
+                    data: [55.6, 8.3],
+                    backgroundColor: ['#f87171', '#38bdf8'],
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' } },
+                    y: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' }, max: 70 }
+                }
+            }
+        });
+
+        // Chart 3: Plan Tier Churn
+        new Chart(document.getElementById('planChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Basic Tier', 'Standard Tier', 'Premium Tier'],
+                datasets: [{
+                    label: 'Churn Rate (%)',
+                    data: [71.4, 0.0, 0.0],
+                    backgroundColor: ['#f87171', '#38bdf8', '#c084fc'],
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' } },
+                    y: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' }, max: 100 }
+                }
+            }
+        });
+
+        // Chart 4: Support Escalation
+        new Chart(document.getElementById('escalationChart'), {
+            type: 'bar',
+            data: {
+                labels: ['No Escalation (0)', 'Escalated Complaints (≥1)'],
+                datasets: [{
+                    label: 'Churn Rate (%)',
+                    data: [0.0, 100.0],
+                    backgroundColor: ['#4ade80', '#f87171'],
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' } },
+                    y: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' }, max: 100 }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
