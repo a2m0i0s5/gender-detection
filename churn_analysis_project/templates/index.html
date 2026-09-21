@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ChurnGuard – Customer Churn Analysis & AI Targeted Offers System</title>
+    <title>ChurnGuard – Customer Churn Analysis & AI Targeted Retention Platform</title>
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -45,9 +45,7 @@
             display: flex;
             flex-direction: column;
             position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
+            top: 0; bottom: 0; left: 0;
             z-index: 100;
         }
 
@@ -60,21 +58,15 @@
         }
 
         .brand-logo {
-            width: 34px;
-            height: 34px;
+            width: 36px; height: 36px;
             background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
             border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #0f172a;
-            font-weight: 800;
-            font-size: 18px;
+            display: flex; align-items: center; justify-content: center;
+            color: #0f172a; font-weight: 800; font-size: 18px;
         }
 
         .brand-text {
-            font-size: 18px;
-            font-weight: 700;
+            font-size: 18px; font-weight: 700;
             background: linear-gradient(to right, #38bdf8, #c084fc);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -117,7 +109,7 @@
             color: var(--text-secondary);
         }
 
-        /* Main Wrapper */
+        /* Main Body Wrapper */
         .main-wrapper {
             margin-left: 260px;
             flex-grow: 1;
@@ -159,11 +151,7 @@
             margin-left: 8px;
         }
 
-        .topbar-controls {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
+        .topbar-controls { display: flex; align-items: center; gap: 16px; }
 
         .role-badge {
             background: rgba(192, 132, 252, 0.15);
@@ -176,8 +164,7 @@
         }
 
         .pulse-dot {
-            width: 8px;
-            height: 8px;
+            width: 8px; height: 8px;
             background-color: var(--accent-green);
             border-radius: 50%;
             display: inline-block;
@@ -238,11 +225,7 @@
             margin-bottom: 6px;
         }
 
-        .metric-value {
-            font-size: clamp(22px, 3.5vw, 28px);
-            font-weight: 700;
-        }
-
+        .metric-value { font-size: clamp(22px, 3.5vw, 28px); font-weight: 700; }
         .metric-value.red { color: var(--accent-red); }
         .metric-value.green { color: var(--accent-green); }
         .metric-value.blue { color: var(--accent-blue); }
@@ -269,7 +252,7 @@
         .chart-card h3 { font-size: 15px; font-weight: 600; margin-bottom: 16px; }
         .chart-container { position: relative; height: 240px; width: 100%; }
 
-        /* Controls Toolbar */
+        /* Toolbar & Controls */
         .toolbar {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -285,7 +268,7 @@
 
         .filter-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
-        select, button, input {
+        select, button, input, textarea {
             background: rgba(15, 23, 42, 0.8);
             border: 1px solid var(--border-color);
             color: var(--text-primary);
@@ -296,24 +279,11 @@
             cursor: pointer;
         }
 
-        .btn-primary {
-            background: var(--accent-blue);
-            color: #0f172a;
-            border: none;
-            font-weight: 600;
-        }
-
+        .btn-primary { background: var(--accent-blue); color: #0f172a; border: none; font-weight: 600; }
         .btn-primary:hover { background: #7dd3fc; }
-
-        .btn-outline {
-            border: 1px solid var(--accent-blue);
-            color: var(--accent-blue);
-            background: rgba(56, 189, 248, 0.1);
-        }
-
+        .btn-outline { border: 1px solid var(--accent-blue); color: var(--accent-blue); background: rgba(56, 189, 248, 0.1); }
         .btn-outline:hover { background: var(--accent-blue); color: #0f172a; }
 
-        /* Table Card */
         .table-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -333,9 +303,9 @@
         .risk-medium { background: rgba(251, 191, 36, 0.2); color: var(--accent-yellow); }
         .risk-low { background: rgba(74, 222, 128, 0.2); color: var(--accent-green); }
 
-        /* AI Targeted Ad Mockup Card */
+        /* Targeted Ad Card */
         .ad-mockup-card {
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
             border: 2px solid var(--accent-blue);
             border-radius: 14px;
             padding: 24px;
@@ -345,43 +315,27 @@
         }
 
         .ad-badge {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: rgba(56, 189, 248, 0.2);
-            color: var(--accent-blue);
+            position: absolute; top: 16px; right: 16px;
+            background: rgba(56, 189, 248, 0.2); color: var(--accent-blue);
             border: 1px solid var(--accent-blue);
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 700;
+            padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700;
         }
 
         .ad-headline { font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 8px; }
         .ad-subtext { font-size: 14px; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.5; }
-
         .ad-code-tag {
-            background: rgba(251, 191, 36, 0.15);
-            color: var(--accent-yellow);
+            background: rgba(251, 191, 36, 0.15); color: var(--accent-yellow);
             border: 1px dashed var(--accent-yellow);
-            padding: 6px 14px;
-            border-radius: 6px;
-            font-family: monospace;
-            font-weight: 700;
-            display: inline-block;
-            margin-bottom: 16px;
+            padding: 6px 14px; border-radius: 6px; font-family: monospace; font-weight: 700;
+            display: inline-block; margin-bottom: 16px;
         }
 
-        /* Modal Overlays */
+        /* Modals */
         .modal-overlay {
             display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(6px);
-            z-index: 1000;
-            align-items: center; justify-content: center;
-            padding: 16px;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(6px);
+            z-index: 1000; align-items: center; justify-content: center; padding: 16px;
         }
 
         .modal-card {
@@ -389,8 +343,7 @@
             border: 1px solid var(--border-color);
             border-radius: 14px;
             max-width: 680px; width: 100%;
-            max-height: 90vh; overflow-y: auto;
-            padding: 24px;
+            max-height: 90vh; overflow-y: auto; padding: 24px;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
         }
 
@@ -425,23 +378,25 @@
             <li class="menu-item"><a class="menu-link active" onclick="switchSection('dashboard')">📊 Executive Dashboard</a></li>
             <li class="menu-item"><a class="menu-link" onclick="switchSection('ai-analyst')">🤖 AI Smart Data Analyst</a></li>
             <li class="menu-item"><a class="menu-link" onclick="switchSection('customers')">👥 Customer Explorer</a></li>
+            <li class="menu-item"><a class="menu-link" onclick="switchSection('campaigns')">⚡ Retention Campaigns</a></li>
+            <li class="menu-item"><a class="menu-link" onclick="switchSection('feedback')">💬 Exit Survey Feedback</a></li>
             <li class="menu-item"><a class="menu-link" onclick="switchSection('outbox')">📨 Email Outbox Stream</a></li>
             <li class="menu-item"><a class="menu-link" onclick="exportReport('csv')">📥 Export CSV Report</a></li>
             <li class="menu-item"><a class="menu-link" onclick="exportReport('excel')">📊 Export Excel Report</a></li>
         </ul>
 
-        <div class="sidebar-footer">ChurnGuard v2.0 • AI Edition</div>
+        <div class="sidebar-footer">ChurnGuard v2.0 • Live Platform</div>
     </div>
 
-    <!-- Main Content -->
+    <!-- Main Content Area -->
     <div class="main-wrapper">
         <topbar>
             <div class="search-box">
                 🔍 <input type="text" id="globalSearch" placeholder="Search subscriber by name or email..." onkeyup="handleGlobalSearch(event)">
             </div>
             <div class="topbar-controls">
-                <div class="badge"><span class="pulse-dot"></span> AI Analyst Online</div>
-                <div class="role-badge">Role: Smart Data Analyst</div>
+                <div class="badge"><span class="pulse-dot"></span> REST API Online</div>
+                <div class="role-badge">Role: Retention Specialist</div>
             </div>
         </topbar>
 
@@ -462,7 +417,7 @@
                         <div class="metric-sub" id="kpiRetentionSub">15 Active Subscribers</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-title">Monthly Churn</div>
+                        <div class="metric-title">Monthly Contract Churn</div>
                         <div class="metric-value red" id="kpiMonthlyChurn">55.6%</div>
                         <div class="metric-sub">Vs 8.3% Annual (6.7x higher)</div>
                     </div>
@@ -479,7 +434,7 @@
                     <div class="metric-card">
                         <div class="metric-title">ML Prediction Accuracy</div>
                         <div class="metric-value purple" id="kpiMlAcc">100.0%</div>
-                        <div class="metric-sub">Random Forest Engine</div>
+                        <div class="metric-sub">Random Forest Classifier</div>
                     </div>
                 </div>
 
@@ -503,29 +458,21 @@
                 </div>
             </div>
 
-            <!-- SECTION 2: NEW AI SMART DATA ANALYST & TARGETED ADS HUB -->
+            <!-- SECTION 2: AI SMART DATA ANALYST & TARGETED ADS HUB -->
             <div id="sec-ai-analyst" class="table-card" style="display:none;">
                 <div class="toolbar">
                     <div>
                         <h3>🤖 AI Smart Data Analyst & Automated Targeted Ads Generator</h3>
-                        <p style="font-size:12px; color:var(--text-secondary); margin-top:2px;">Select any subscriber below to automatically analyze behavioral data and generate personalized offers & targeted ad mockups!</p>
+                        <p style="font-size:12px; color:var(--text-secondary); margin-top:2px;">Automatically reads subscriber behavioral data and generates personalized offers & targeted ad banners!</p>
                     </div>
                     <div>
                         <select id="aiCustomerSelect" onchange="runAiAnalyst(this.value)" style="padding:10px; font-weight:600;">
-                            <option value="101">Aarav Sharma (Basic Monthly • Karnataka)</option>
-                            <option value="102">Priya Patel (Basic Monthly • Karnataka)</option>
-                            <option value="103">Rahul Verma (Tech Lag Complaint)</option>
-                            <option value="104">Ananya Rao (Content Dissatisfied)</option>
-                            <option value="108">Neha Joshi (Competitor Offer)</option>
-                            <option value="111">Amit Kumar (Basic Annual)</option>
+                            <!-- Populated dynamically -->
                         </select>
                     </div>
                 </div>
 
-                <!-- AI Analyst Results Container -->
-                <div id="aiResultsBox">
-                    <!-- Populated via API -->
-                </div>
+                <div id="aiResultsBox"></div>
             </div>
 
             <!-- SECTION 3: CUSTOMER EXPLORER -->
@@ -573,7 +520,74 @@
                 </div>
             </div>
 
-            <!-- SECTION 4: OUTBOX -->
+            <!-- SECTION 4: CAMPAIGNS HUB -->
+            <div id="sec-campaigns" class="table-card" style="display:none;">
+                <div class="toolbar">
+                    <h3>⚡ Retention Campaign Management Hub</h3>
+                    <button class="btn-primary" onclick="openCampaignModal()">+ Create New Retention Campaign</button>
+                </div>
+                <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:16px;" id="campaignsGrid">
+                    <div style="background:#0f172a; border:1px solid var(--border-color); padding:16px; border-radius:10px;">
+                        <h4 style="color:var(--accent-blue);">Price Sensitivity Recovery Campaign</h4>
+                        <p style="font-size:12px; color:var(--text-secondary); margin-top:4px;">Target: High Risk Basic Monthly Subscribers</p>
+                        <div style="margin-top:12px; font-size:13px;">
+                            <div>Targeted: <strong>6 Subscribers</strong></div>
+                            <div>Emails Dispatched: <strong>6 Emails</strong></div>
+                            <div>Response Rate: <strong style="color:var(--accent-green);">50.0%</strong></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 5: EXIT SURVEY FEEDBACK HUB -->
+            <div id="sec-feedback" class="table-card" style="display:none;">
+                <div class="toolbar">
+                    <h3>💬 Customer Exit Survey Feedback & Reason Analysis</h3>
+                    <button class="btn-outline" onclick="openFeedbackModal()">+ Submit Feedback Demo</button>
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Feedback ID</th>
+                                <th>Customer ID</th>
+                                <th>Categorized Reason</th>
+                                <th>Customer Comment</th>
+                                <th>Submitted At</th>
+                                <th>AI Recommended Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="feedbackTableBody">
+                            <tr>
+                                <td>#1</td>
+                                <td>#101 (Aarav Sharma)</td>
+                                <td><span class="risk-tag risk-high">Price Sensitivity</span></td>
+                                <td>"Subscription became too expensive after price revision in Karnataka."</td>
+                                <td>2024-09-16 15:00:00</td>
+                                <td><strong style="color:var(--accent-blue);">Offer 20% Discount on Annual Tier</strong></td>
+                            </tr>
+                            <tr>
+                                <td>#2</td>
+                                <td>#102 (Priya Patel)</td>
+                                <td><span class="risk-tag risk-medium">Competitor Switch</span></td>
+                                <td>"Switched to rival app for annual combo deal."</td>
+                                <td>2024-09-19 12:00:00</td>
+                                <td><strong style="color:var(--accent-blue);">Match Competitor Combo Deal</strong></td>
+                            </tr>
+                            <tr>
+                                <td>#3</td>
+                                <td>#103 (Rahul Verma)</td>
+                                <td><span class="risk-tag risk-high">Technical Glitch</span></td>
+                                <td>"App buffering during live cricket matches."</td>
+                                <td>2024-09-06 10:30:00</td>
+                                <td><strong style="color:var(--accent-blue);">Priority SLA + 1 Month Free Access</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SECTION 6: OUTBOX LOG STREAM -->
             <div id="sec-outbox" class="table-card" style="display:none;">
                 <div class="toolbar">
                     <h3>📨 Live Sent Emails Stream (SQLite Logged)</h3>
@@ -589,6 +603,7 @@
                                 <th>Subject</th>
                                 <th>Dispatched Time</th>
                                 <th>Status</th>
+                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody id="outboxTableBody"></tbody>
@@ -598,7 +613,7 @@
         </div>
     </div>
 
-    <!-- MODAL: PROFILE & AI INSIGHTS -->
+    <!-- MODAL 1: CUSTOMER PROFILE & TIMELINE -->
     <div class="modal-overlay" id="profileModal">
         <div class="modal-card">
             <div class="modal-header">
@@ -609,7 +624,116 @@
         </div>
     </div>
 
+    <!-- MODAL 2: EMAIL PREVIEW & SEND -->
+    <div class="modal-overlay" id="emailModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>📧 Email Template Preview & Delivery Dispatch</h3>
+                <button class="close-btn" onclick="closeModal('emailModal')">&times;</button>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <label style="font-size: 12px; color: var(--text-secondary);">Select Template:</label>
+                <select id="emailTemplateSelect" style="width: 100%; margin-top: 4px;" onchange="updateEmailPreview()">
+                    <option value="exit_survey">Exit Survey & Feedback Request</option>
+                    <option value="retention_offer">30% Off Retention Discount Offer</option>
+                    <option value="price_sensitivity">Price Concern & Annual Tier Protection</option>
+                    <option value="competitor_match">Competitor Deal Match Campaign</option>
+                    <option value="service_recovery">Priority Support & Service Recovery</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 12px;">
+                <label style="font-size: 12px; color: var(--text-secondary);">Subject Line:</label>
+                <input type="text" id="emailSubjectInput" style="width: 100%; background: #0f172a; border: 1px solid var(--border-color); color: white; padding: 8px; border-radius: 6px; margin-top: 4px;">
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <label style="font-size: 12px; color: var(--text-secondary);">Email Body Preview:</label>
+                <textarea id="emailBodyInput" style="width: 100%; height: 160px; background: #0f172a; border: 1px solid var(--border-color); color: white; padding: 10px; border-radius: 6px; margin-top: 4px; font-family: monospace; font-size: 12px;"></textarea>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button onclick="closeModal('emailModal')">Cancel</button>
+                <button class="btn-primary" onclick="sendCustomEmail()">⚡ Send Email Now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: CAMPAIGN CREATOR -->
+    <div class="modal-overlay" id="campaignModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>⚡ Launch Retention Campaign</h3>
+                <button class="close-btn" onclick="closeModal('campaignModal')">&times;</button>
+            </div>
+            <div style="margin-bottom: 12px;">
+                <label style="font-size: 12px; color: var(--text-secondary);">Campaign Name:</label>
+                <input type="text" id="campName" value="Price Sensitivity Recovery Campaign" style="width: 100%; background: #0f172a; border: 1px solid var(--border-color); color: white; padding: 8px; border-radius: 6px; margin-top: 4px;">
+            </div>
+            <div style="margin-bottom: 16px;">
+                <label style="font-size: 12px; color: var(--text-secondary);">Target Segment:</label>
+                <select id="campSegment" style="width: 100%; margin-top: 4px;">
+                    <option value="High Risk Monthly">High Risk + Monthly Basic Tier</option>
+                    <option value="Karnataka Region">Karnataka Churned Subscribers</option>
+                </select>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button onclick="closeModal('campaignModal')">Cancel</button>
+                <button class="btn-primary" onclick="executeCampaign()">Launch Campaign</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: FEEDBACK FORM -->
+    <div class="modal-overlay" id="feedbackModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>📝 Submit Customer Exit Survey Feedback</h3>
+                <button class="close-btn" onclick="closeModal('feedbackModal')">&times;</button>
+            </div>
+            <div style="margin-bottom: 12px;">
+                <label style="font-size: 12px; color: var(--text-secondary);">Select Customer:</label>
+                <select id="feedCustId" style="width: 100%; margin-top: 4px;">
+                    <option value="101">#101 - Aarav Sharma</option>
+                    <option value="102">#102 - Priya Patel</option>
+                    <option value="103">#103 - Rahul Verma</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 12px;">
+                <label style="font-size: 12px; color: var(--text-secondary);">Reason Category:</label>
+                <select id="feedCategory" style="width: 100%; margin-top: 4px;">
+                    <option value="Price Sensitivity">Price Sensitivity / Too Expensive</option>
+                    <option value="Competitor Switch">Competitor Switch</option>
+                    <option value="Technical Glitch">Technical Playback Glitch</option>
+                    <option value="Poor Customer Support">Poor Support Service</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 16px;">
+                <label style="font-size: 12px; color: var(--text-secondary);">Customer Comments:</label>
+                <textarea id="feedComment" style="width: 100%; height: 80px;" placeholder="Customer quote or survey comment..."></textarea>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button onclick="closeModal('feedbackModal')">Cancel</button>
+                <button class="btn-primary" onclick="submitSurveyFeedback()">Submit Feedback</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 5: SENT EMAIL INSPECTION -->
+    <div class="modal-overlay" id="outboxModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>📨 Inspect Sent Email & Outbox Log</h3>
+                <button class="close-btn" onclick="closeModal('outboxModal')">&times;</button>
+            </div>
+            <div id="outboxInspectContent"></div>
+        </div>
+    </div>
+
     <script>
+        let currentCustomerId = null;
+
         function showAlert(msg) {
             const box = document.getElementById('alertBox');
             box.innerHTML = msg;
@@ -625,10 +749,14 @@
                 document.getElementById('sec-dashboard').style.display = 'block';
             } else if (secName === 'ai-analyst') {
                 document.getElementById('sec-ai-analyst').style.display = 'block';
-                runAiAnalyst(document.getElementById('aiCustomerSelect').value);
+                populateAiSelect();
             } else if (secName === 'customers') {
                 document.getElementById('sec-customers').style.display = 'block';
                 loadCustomers();
+            } else if (secName === 'campaigns') {
+                document.getElementById('sec-campaigns').style.display = 'block';
+            } else if (secName === 'feedback') {
+                document.getElementById('sec-feedback').style.display = 'block';
             } else if (secName === 'outbox') {
                 document.getElementById('sec-outbox').style.display = 'block';
                 loadOutbox();
@@ -636,6 +764,8 @@
         }
 
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        function openCampaignModal() { document.getElementById('campaignModal').style.display = 'flex'; }
+        function openFeedbackModal() { document.getElementById('feedbackModal').style.display = 'flex'; }
 
         async function loadDashboard() {
             const res = await fetch('/api/dashboard');
@@ -651,7 +781,22 @@
             renderCharts(data);
         }
 
-        // NEW AI SMART DATA ANALYST RUNNER
+        async function populateAiSelect() {
+            const res = await fetch('/api/customers');
+            const data = await res.json();
+            const sel = document.getElementById('aiCustomerSelect');
+            sel.innerHTML = '';
+            data.customers.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.customerid;
+                opt.innerText = `${c.name} (${c.plan_type} ${c.contract_type} • ${c.State})`;
+                sel.appendChild(opt);
+            });
+            if (data.customers.length > 0) {
+                runAiAnalyst(data.customers[0].customerid);
+            }
+        }
+
         async function runAiAnalyst(custId) {
             const res = await fetch(`/api/ai/analyst/${custId}`);
             const data = await res.json();
@@ -667,7 +812,7 @@
                 </div>
 
                 <div class="ad-mockup-card">
-                    <div class="ad-badge">🤖 Targeted Visual Ad Mockup</div>
+                    <div class="ad-badge">🤖 Targeted Visual Ad Banner Template</div>
                     <div class="ad-headline">${data.targeted_ad.headline}</div>
                     <div class="ad-subtext">${data.targeted_ad.subtext}</div>
                     <div class="ad-code-tag">USE PROMO CODE: ${data.personalized_offer.code}</div>
@@ -687,8 +832,8 @@
                 body: JSON.stringify({
                     customer_id: custId,
                     template_key: 'retention_offer',
-                    custom_subject: `Special StreamFlix Deal: ${adHeadline}`,
-                    custom_body: `Dear Subscriber,\n\nWe have automatically unlocked a special offer for you:\n\n${offerTitle}\n\nClaim your deal now on StreamFlix!`
+                    custom_subject: `Special Deal: ${adHeadline}`,
+                    custom_body: `Dear Subscriber,\n\nWe have automatically unlocked a special offer for you:\n\n${offerTitle}\n\nClaim your deal now!`
                 })
             });
             const data = await res.json();
@@ -721,7 +866,8 @@
                     <td><span class="risk-tag ${riskClass}">${c.churn_score} / 100 (${c.risk_level})</span></td>
                     <td>${statusBadge}</td>
                     <td>
-                        <button class="btn-outline" onclick="openProfileModal(${c.customerid})">👤 Profile & AI</button>
+                        <button class="btn-outline" onclick="openProfileModal(${c.customerid})">👤 Profile</button>
+                        <button class="btn-primary" onclick="openEmailModal(${c.customerid})">📧 Email</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -751,11 +897,6 @@
                     <p style="color:var(--accent-blue); margin-top:4px;">${ai.analyst_insight}</p>
                 </div>
 
-                <div class="ad-mockup-card" style="margin-bottom:16px; padding:16px;">
-                    <div style="font-size:16px; font-weight:700; color:white;">${ai.targeted_ad.headline}</div>
-                    <div style="font-size:12px; color:var(--text-secondary); margin-top:4px;">${ai.targeted_ad.subtext}</div>
-                </div>
-
                 <h5 style="color:var(--accent-blue); margin-bottom:8px;">Customer Activity Timeline:</h5>
                 <div class="timeline-container">
             `;
@@ -775,6 +916,74 @@
             document.getElementById('profileModal').style.display = 'flex';
         }
 
+        async function openEmailModal(custId) {
+            currentCustomerId = custId;
+            await updateEmailPreview();
+            document.getElementById('emailModal').style.display = 'flex';
+        }
+
+        async function updateEmailPreview() {
+            if (!currentCustomerId) return;
+            const tKey = document.getElementById('emailTemplateSelect').value;
+            const res = await fetch('/api/email/preview', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ customer_id: currentCustomerId, template_key: tKey })
+            });
+            const data = await res.json();
+            document.getElementById('emailSubjectInput').value = data.subject;
+            document.getElementById('emailBodyInput').value = data.body;
+        }
+
+        async function sendCustomEmail() {
+            const tKey = document.getElementById('emailTemplateSelect').value;
+            const subj = document.getElementById('emailSubjectInput').value;
+            const body = document.getElementById('emailBodyInput').value;
+
+            const res = await fetch('/api/email/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    customer_id: currentCustomerId,
+                    template_key: tKey,
+                    custom_subject: subj,
+                    custom_body: body
+                })
+            });
+            const data = await res.json();
+            closeModal('emailModal');
+            showAlert(`⚡ Email Dispatched to ${data.email}! Message ID: ${data.message_id}`);
+        }
+
+        async function executeCampaign() {
+            const name = document.getElementById('campName').value;
+            const seg = document.getElementById('campSegment').value;
+
+            const res = await fetch('/api/campaign/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ campaign_name: name, target_audience: seg, template_key: 'price_sensitivity' })
+            });
+            const data = await res.json();
+            closeModal('campaignModal');
+            showAlert(`⚡ Campaign "${data.campaign_name}" Launched! Sent ${data.sent_count} emails.`);
+        }
+
+        async function submitSurveyFeedback() {
+            const custId = document.getElementById('feedCustId').value;
+            const cat = document.getElementById('feedCategory').value;
+            const comm = document.getElementById('feedComment').value;
+
+            const res = await fetch('/api/feedback/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ customer_id: parseInt(custId), reason_category: cat, comment: comm })
+            });
+            const data = await res.json();
+            closeModal('feedbackModal');
+            showAlert(`✅ Feedback Logged for Customer #${custId}! Action: ${data.recommended_action}`);
+        }
+
         async function loadOutbox() {
             const res = await fetch('/api/email/outbox');
             const data = await res.json();
@@ -790,9 +999,23 @@
                     <td>${l.email_subject}</td>
                     <td>${l.contact_date}</td>
                     <td><span style="color:var(--accent-green); font-weight:600;">${l.status}</span></td>
+                    <td><button class="btn-outline" onclick="inspectOutboxItem('${l.name.replace(/'/g, "\\'")}', '${l.email_address}', '${l.email_subject.replace(/'/g, "\\'")}', '${l.email_body.replace(/'/g, "\\'").replace(/\n/g, "\\n")}', '${l.contact_date}', '${l.status}')">🔍 Inspect</button></td>
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        function inspectOutboxItem(name, email, subj, body, date, status) {
+            document.getElementById('outboxInspectContent').innerHTML = `
+                <div style="font-size:13px; line-height:1.6;">
+                    <div><strong>Recipient:</strong> ${name} &lt;${email}&gt;</div>
+                    <div><strong>Dispatched Date:</strong> ${date}</div>
+                    <div><strong>Status:</strong> <span style="color:var(--accent-green); font-weight:600;">${status}</span></div>
+                    <div style="margin-top:10px;"><strong>Subject:</strong> ${subj}</div>
+                    <div style="background:#0f172a; padding:12px; border-radius:6px; margin-top:8px; font-family:monospace; white-space:pre-wrap;">${body}</div>
+                </div>
+            `;
+            document.getElementById('outboxModal').style.display = 'flex';
         }
 
         function exportReport(fmt) { window.location.href = `/api/reports/export?format=${fmt}`; }
